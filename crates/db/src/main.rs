@@ -8,14 +8,11 @@ use diesel::{
 
 #[tokio::main]
 async fn main() -> Result<()> {
-
     // get the required configurations
     let db_url = &CONFIG.db_url;
     let redis_url = &CONFIG.redis_url;
 
     println!("Starting DB consumer...");
-    println!("Database URL: {}", db_url);
-    println!("Redis URL: {}", redis_url);
 
     // create a database connection pool
     let manager = ConnectionManager::<PgConnection>::new(db_url);

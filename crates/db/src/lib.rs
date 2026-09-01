@@ -14,10 +14,8 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
     let store_for_handler = store.clone();
     redis
         .consumer(channel, move |msg| {
-            println!(
-                "📨 Received message from Redis: {}",
-                &msg[..msg.len().min(100)]
-            );
+            let chars: String = msg.chars().take(100).collect();
+            println!("📨 Received message from Redis: {}", &chars);
 
             // deserialize the incoming message into TransactionUpdate from geyser
             let tx_update: TransactionUpdate = match serde_json::from_str(&msg) {

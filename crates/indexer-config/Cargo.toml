@@ -1,0 +1,8 @@
+[package]
+name = "indexer-config"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+dotenvy.workspace = true
+once_cell.workspace = true

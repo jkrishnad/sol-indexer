@@ -1,0 +1,10 @@
+[package]
+name = "indexer-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+bs58.workspace = true
+serde.workspace = true
+yellowstone-grpc-proto.workspace = true

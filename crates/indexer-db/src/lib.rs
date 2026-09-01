@@ -1,5 +1,5 @@
 use anyhow::Result;
-use core::TransactionUpdate;
+use indexer_core::TransactionUpdate;
 use models::NewTransaction;
 use redis_adapter::{Consumer, Redis};
 use store::Store;
@@ -15,7 +15,7 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
     redis
         .consumer(channel, move |msg| {
             let chars: String = msg.chars().take(100).collect();
-            println!("Received message from Redis: {}", &chars);
+            println!("Received message from Redis: {}", chars);
 
             // deserialize the incoming message into TransactionUpdate from geyser
             let tx_update: TransactionUpdate = match serde_json::from_str(&msg) {

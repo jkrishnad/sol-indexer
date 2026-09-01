@@ -1,5 +1,5 @@
 use anyhow::Result;
-use config::CONFIG;
+use indexer_config::CONFIG;
 use filter::Filters;
 use geyser::run_geyser;
 use redis_adapter::Redis;
@@ -19,6 +19,6 @@ async fn main() -> Result<()> {
 
     let filters = Filters::from_file(filters_path)?;
 
-    let publisher = Redis::new(&redis_url)?;
+    let publisher = Redis::new(redis_url)?;
     run_geyser::<Redis>(rpc_url, x_token.clone(), &filters, publisher).await
 }

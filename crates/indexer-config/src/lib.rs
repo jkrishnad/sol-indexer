@@ -9,7 +9,7 @@ pub struct Config {
 }
 
 pub static CONFIG: Lazy<Config> = Lazy::new(|| {
-    dotenv::dotenv().ok(); // Load .env only once
+    dotenvy::dotenv().ok(); // Load .env only once
     Config {
         db_url: env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
         redis_url: env::var("REDIS_URL").expect("REDIS_URL must be set"),

@@ -52,7 +52,7 @@ impl Consumer for Redis {
 impl Publisher for Redis {
     async fn publisher(&self, channel: &str, payload: &[u8]) -> Result<(), anyhow::Error> {
         // getting a client connection
-        let mut connection = self.client.get_multiplexed_tokio_connection().await?;
+        let mut connection = self.client.get_multiplexed_async_connection().await?;
         // converting the bytes which we get from the geyser into string
         let payload_str = String::from_utf8(payload.to_vec())?;
 

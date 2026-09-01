@@ -1,10 +1,10 @@
 [package]
 name = "redis-adapter"
-version = "0.1.0"
-edition = "2024"
+version.workspace = true
+edition.workspace = true
 
 [dependencies]
-anyhow = "1.0.99"
-async-trait = "0.1.89"
-redis = { version = "0.32.5", features = ["tokio-comp"] }
-futures = "0.3.31"
+anyhow.workspace = true
+async-trait.workspace = true
+futures.workspace = true
+redis.workspace = true

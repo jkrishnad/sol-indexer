@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use colored::Colorize;
-use core::{
+use indexer_core::{
     AccountUpdate, BlockUpdate, EntryUpdate, SlotUpdate, TransactionStatusUpdate, TransactionUpdate,
 };
 use futures::StreamExt;

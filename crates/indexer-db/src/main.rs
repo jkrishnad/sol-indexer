@@ -1,10 +1,10 @@
 use anyhow::Result;
-use config::CONFIG;
-use db::{run_consumer, store::Store};
 use diesel::{
     pg::PgConnection,
     r2d2::{ConnectionManager, Pool},
 };
+use indexer_config::CONFIG;
+use indexer_db::{run_consumer, store::Store};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -25,7 +25,7 @@ async fn main() -> Result<()> {
 
     // run consumer for transactions channel
     println!("Starting consumer for 'transactions' channel...");
-    run_consumer(store, &redis_url, "transactions").await?;
+    let _ = run_consumer(store, &redis_url, "transactions").await;
 
     Ok(())
 }

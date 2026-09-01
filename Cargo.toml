@@ -1,10 +1,36 @@
-
 [workspace]
 resolver = "2"
 members = [
-    "crates/core",
-    "crates/db",
-    "crates/config",
+    "crates/indexer-core",
+    "crates/indexer-db",
+    "crates/indexer-config",
     "crates/redis-adapter",
     "crates/geyser-adapter",
 ]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+
+[workspace.dependencies]
+indexer-core = { path = "crates/indexer-core" }
+indexer-config = { path = "crates/indexer-config" }
+redis-adapter = { path = "crates/redis-adapter" }
+yellowstone-grpc-client = "9.0.0"
+yellowstone-grpc-proto = "9.0.0"
+tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
+futures = "0.3.31"
+async-trait = "0.1.89"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.143"
+anyhow = "1.0.99"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
+diesel = { version = "2.2.12", features = ["postgres", "r2d2"] }
+redis = { version = "1.6.0", features = ["tokio-comp"] }
+tonic = { version = "0.14.1", features = ["transport"] }
+rustls = { version = "0.23.31", features = ["ring"] }
+bs58 = "0.5.1"
+dotenvy = "0.15.7"
+once_cell = "1.21.3"
+colored = "3.0.0"

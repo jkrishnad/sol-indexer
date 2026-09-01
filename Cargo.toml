@@ -16,8 +16,8 @@ edition = "2024"
 indexer-core = { path = "crates/indexer-core" }
 indexer-config = { path = "crates/indexer-config" }
 redis-adapter = { path = "crates/redis-adapter" }
-yellowstone-grpc-client = "9.0.0"
-yellowstone-grpc-proto = "9.0.0"
+yellowstone-grpc-client = { git = "https://github.com/rpcpool/yellowstone-grpc", tag = "v16.0.0-rc5+solana.4.3.0.beta.3" }
+yellowstone-grpc-proto = { git = "https://github.com/rpcpool/yellowstone-grpc", tag = "v16.0.0-rc5+solana.4.3.0.beta.3" }
 tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
 futures = "0.3.31"
 async-trait = "0.1.89"

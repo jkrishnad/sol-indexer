@@ -3,7 +3,7 @@ use std::{collections::HashMap, fs};
 use anyhow::Result;
 use serde::Deserialize;
 use yellowstone_grpc_proto::geyser::{
-    SubscribeRequest, SubscribeRequestAccountsDataSlice, SubscribeRequestFilterAccounts,
+    CommitmentLevel, SubscribeRequest, SubscribeRequestFilterAccounts,
     SubscribeRequestFilterAccountsFilter, SubscribeRequestFilterAccountsFilterMemcmp,
     SubscribeRequestFilterBlocks, SubscribeRequestFilterSlots, SubscribeRequestFilterTransactions,
     subscribe_request_filter_accounts_filter::Filter as AccountsFilterOneof,
@@ -105,9 +105,10 @@ impl Filters {
                 "client".to_owned(),
                 SubscribeRequestFilterAccounts {
                     account: acc.accounts.clone(),
-                    owner: acc.owners.clone(),     
+                    owner: acc.owners.clone(),
                     filters,
                     nonempty_txn_signature: None,
+                    cuckoo_accounts_filter: None,
                 },
             );
         }
@@ -124,6 +125,8 @@ impl Filters {
                     account_include: tx.account_include.clone(),
                     account_exclude: tx.account_exclude.clone(),
                     account_required: tx.account_required.clone(),
+                    cuckoo_account_include: None,
+                    token_accounts: None,
                 },
             );
         }
@@ -138,6 +141,7 @@ impl Filters {
                     include_accounts: self.blocks_include_accounts,
                     include_entries: self.blocks_include_entries,
                     include_transactions: self.blocks_include_transactions,
+                    cuckoo_account_include: None,
                 },
             );
         }
@@ -162,11 +166,10 @@ impl Filters {
             transactions,
             transactions_status: HashMap::new(),
             entry: HashMap::new(),
-            accounts_data_slice: vec![SubscribeRequestAccountsDataSlice {
-                offset: 0,
-                length: u32::MAX as u64,
-            }],
-            commitment: None,
+            accounts_data_slice: vec![],
+            // Processed can be rolled back by a fork and we have no reorg
+            // handling yet, so index confirmed instead.
+            commitment: Some(CommitmentLevel::Confirmed as i32),
             from_slot: None,
             ping: None,
         }

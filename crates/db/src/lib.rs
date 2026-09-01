@@ -15,16 +15,16 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
     redis
         .consumer(channel, move |msg| {
             let chars: String = msg.chars().take(100).collect();
-            println!("📨 Received message from Redis: {}", &chars);
+            println!("Received message from Redis: {}", &chars);
 
             // deserialize the incoming message into TransactionUpdate from geyser
             let tx_update: TransactionUpdate = match serde_json::from_str(&msg) {
                 Ok(tx) => {
-                    println!("✅ Successfully deserialized TransactionUpdate");
+                    println!("Successfully deserialized TransactionUpdate");
                     tx
                 }
                 Err(e) => {
-                    eprintln!("❌ Failed to deserialize message: {}", e);
+                    eprintln!("Failed to deserialize message: {}", e);
                     eprintln!("Message content: {}", msg);
                     return Err(anyhow::anyhow!("Deserialization failed: {}", e));
                 }
@@ -33,14 +33,14 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
             // extract transaction info if present
             if let Some(tx_info) = tx_update.transaction {
                 println!(
-                    "📝 Transaction info found: slot={}, index={}",
+                    "Transaction info found: slot={}, index={}",
                     tx_update.slot, tx_info.index
                 );
 
                 // extract meta if present
                 if let Some(meta) = tx_info.meta {
                     println!(
-                        "🔍 Meta found: fee={}, pre_balances={}",
+                        "Meta found: fee={}, pre_balances={}",
                         meta.fee,
                         meta.pre_balances.len()
                     );
@@ -71,7 +71,7 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
                                 .into_iter()
                                 .map(|_| Some(0i64))
                                 .collect(),
-                        ), // Placeholder for now
+                        ),
                         Some(
                             meta.post_token_balance
                                 .into_iter()
@@ -81,19 +81,19 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
                     );
 
                     // insert the new transaction into the database
-                    println!("💾 Inserting transaction into database...");
+                    println!("Inserting transaction into database...");
                     match store_for_handler.insert_transaction(&[new_tx]) {
-                        Ok(count) => println!("✅ Successfully inserted {} transaction(s)", count),
+                        Ok(count) => println!("Successfully inserted {} transaction(s)", count),
                         Err(e) => {
-                            eprintln!("❌ Failed to insert transaction: {}", e);
+                            eprintln!("Failed to insert transaction: {}", e);
                             return Err(e);
                         }
                     }
                 } else {
-                    println!("⚠️ No meta found for transaction");
+                    println!("No meta found for transaction");
                 }
             } else {
-                println!("⚠️ No transaction info found");
+                println!("No transaction info found");
             }
 
             Ok(())
@@ -103,6 +103,6 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
     // need to implement consumers for the other channels
     // as for my current rpc not getting their data i'll impl them later
 
-    println!("🔄 Consumer stopped");
+    println!("Consumer stopped");
     Ok(())
 }

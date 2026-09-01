@@ -13,7 +13,7 @@ pub static CONFIG: Lazy<Config> = Lazy::new(|| {
     Config {
         db_url: env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
         redis_url: env::var("REDIS_URL").expect("REDIS_URL must be set"),
-        rpc_url: env::var("RPC_URL").expect("API_URL must be set"),
+        rpc_url: env::var("RPC_URL").expect("RPC_URL must be set"),
         x_token: env::var("RPC_API_KEY").ok(),
     }
 });

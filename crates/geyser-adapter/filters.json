@@ -1,14 +1,5 @@
 {
-  "accounts": [
-    {
-      "accounts": ["Vote111111111111111111111111111111111111111"],
-      "owners": ["TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"],
-      "filters": []
-    }
-  ],
-  "owners": ["TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"],
-  "accounts_memcmp": [],
-  "accounts_datasize": null,
+  "accounts": [],
 
   "include_slots": false,
   "include_blocks": false,
@@ -17,9 +8,12 @@
   "blocks_include_entries": false,
 
   "transactions": {
-    "vote": false,
-    "failed": true,
-    "account_include": ["MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr","TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"],
+    "vote": null,
+    "failed": null,
+    "account_include": [
+      "vyRa8J7ULHfUAdnkTHP3YGhcLWaLURXLmD7CiZkMzWg",
+      "9LjQ5UC1gyebUySAbodzHJdLSkYAYgVeQcr2vv6FZP6E"
+    ],
     "account_exclude": [],
     "account_required": []
   },

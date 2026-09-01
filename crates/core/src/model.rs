@@ -100,22 +100,23 @@ impl TryFrom<yp::SubscribeUpdateAccount> for AccountUpdate {
     type Error = Error;
 
     fn try_from(value: yp::SubscribeUpdateAccount) -> Result<Self, Self::Error> {
+        let acc = value
+            .account
+            .ok_or_else(|| anyhow::anyhow!("SubscribeUpdateAccount had no account info"))?;
+
         Ok(AccountUpdate {
             slot: value.slot,
             is_startup: value.is_startup,
-            info: value
-                .account
-                .map(|acc| AccountInfo {
-                    pubkey: acc.pubkey,
-                    data: acc.data,
-                    executable: acc.executable,
-                    lamports: acc.lamports,
-                    owner: acc.owner,
-                    rent_epoch: acc.rent_epoch,
-                    write_version: acc.write_version,
-                    txn_signature: acc.txn_signature,
-                })
-                .expect(&format!("Account info should not be None")),
+            info: AccountInfo {
+                pubkey: acc.pubkey,
+                data: acc.data,
+                executable: acc.executable,
+                lamports: acc.lamports,
+                owner: acc.owner,
+                rent_epoch: acc.rent_epoch,
+                write_version: acc.write_version,
+                txn_signature: acc.txn_signature,
+            },
         })
     }
 }

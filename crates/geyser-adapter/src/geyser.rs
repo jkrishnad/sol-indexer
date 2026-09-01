@@ -7,7 +7,6 @@ use indexer_core::{
 use redis_adapter::Publisher;
 use serde::Serialize;
 use serde_json::to_string;
-// use tonic::transport::Certificate;
 use yellowstone_grpc_client::{ClientTlsConfig, GeyserGrpcClient};
 use yellowstone_grpc_proto::geyser::{
     SubscribeRequest, SubscribeRequestPing, subscribe_update::UpdateOneof,
@@ -71,21 +70,14 @@ pub async fn run_geyser<P: Publisher>(
     tracing::info!("Getting subscribe request from filters");
     let request = filters.to_subscribe_request();
 
-    tracing::info!("Connecting to geyser at {}", rpc_url);
-    let tls_config = ClientTlsConfig::new().with_native_roots();
+    let tls = rpc_url.starts_with("https://");
+    tracing::info!(rpc_url, tls, "connecting to geyser");
 
-    // this is the optional CA cert loading from env var
-    // if you have a custom rpc then you can set the CA_CERT env var to point to the cert file
-    // for free rpc services like quicknode, alchemy, etc you don't need this
-    // if let Some(ca_cert_path) = std::env::var_os("CA_CERT") {
-    //     let bytes = tokio::fs::read(ca_cert_path).await?;
-    //     tls_config = tls_config.ca_certificate(Certificate::from_pem(bytes));
-    // }
+    let mut builder = GeyserGrpcClient::build_from_shared(rpc_url.to_string())?.x_token(x_token)?;
 
-    // create the connection
-    let builder = GeyserGrpcClient::build_from_shared(rpc_url.to_string())?
-        .x_token(x_token)?
-        .tls_config(tls_config)?;
+    if tls {
+        builder = builder.tls_config(ClientTlsConfig::new().with_native_roots())?;
+    }
 
     // connect to the geyser
     let mut client = builder.connect().await?;

@@ -3,6 +3,7 @@ use indexer_core::TransactionUpdate;
 use models::NewTransaction;
 use redis_adapter::{Consumer, Redis};
 use store::Store;
+use tracing::info;
 pub mod models;
 mod schema;
 pub mod store;
@@ -15,31 +16,31 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
     redis
         .consumer(channel, move |msg| {
             let chars: String = msg.chars().take(100).collect();
-            println!("Received message from Redis: {}", chars);
+            info!("Received message from Redis: {}", chars);
 
             // deserialize the incoming message into TransactionUpdate from geyser
             let tx_update: TransactionUpdate = match serde_json::from_str(&msg) {
                 Ok(tx) => {
-                    println!("Successfully deserialized TransactionUpdate");
+                    info!("Successfully deserialized TransactionUpdate");
                     tx
                 }
                 Err(e) => {
-                    eprintln!("Failed to deserialize message: {}", e);
-                    eprintln!("Message content: {}", msg);
+                    info!("Failed to deserialize message: {}", e);
+                    info!("Message content: {}", msg);
                     return Err(anyhow::anyhow!("Deserialization failed: {}", e));
                 }
             };
 
             // extract transaction info if present
             if let Some(tx_info) = tx_update.transaction {
-                println!(
+                info!(
                     "Transaction info found: slot={}, index={}",
                     tx_update.slot, tx_info.index
                 );
 
                 // extract meta if present
                 if let Some(meta) = tx_info.meta {
-                    println!(
+                    info!(
                         "Meta found: fee={}, pre_balances={}",
                         meta.fee,
                         meta.pre_balances.len()
@@ -81,19 +82,19 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
                     );
 
                     // insert the new transaction into the database
-                    println!("Inserting transaction into database...");
+                    info!("Inserting transaction into database...");
                     match store_for_handler.insert_transaction(&[new_tx]) {
-                        Ok(count) => println!("Successfully inserted {} transaction(s)", count),
+                        Ok(count) => info!("Successfully inserted {} transaction(s)", count),
                         Err(e) => {
-                            eprintln!("Failed to insert transaction: {}", e);
+                            info!("Failed to insert transaction: {}", e);
                             return Err(e);
                         }
                     }
                 } else {
-                    println!("No meta found for transaction");
+                    info!("No meta found for transaction");
                 }
             } else {
-                println!("No transaction info found");
+                info!("No transaction info found");
             }
 
             Ok(())
@@ -103,6 +104,6 @@ pub async fn run_consumer(store: Store, redis_url: &str, channel: &str) -> Resul
     // need to implement consumers for the other channels
     // as for my current rpc not getting their data i'll impl them later
 
-    println!("Consumer stopped");
+    info!("Consumer stopped");
     Ok(())
 }

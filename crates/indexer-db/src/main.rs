@@ -5,14 +5,16 @@ use diesel::{
 };
 use indexer_config::CONFIG;
 use indexer_db::{run_consumer, store::Store};
+use tracing::info;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    tracing_subscriber::fmt::init();
     // get the required configurations
     let db_url = &CONFIG.db_url;
     let redis_url = &CONFIG.redis_url;
 
-    println!("Starting DB consumer...");
+    info!("Starting DB consumer...");
 
     // create a database connection pool
     let manager = ConnectionManager::<PgConnection>::new(db_url);
@@ -24,8 +26,8 @@ async fn main() -> Result<()> {
     let store = Store::new(pool);
 
     // run consumer for transactions channel
-    println!("Starting consumer for 'transactions' channel...");
-    let _ = run_consumer(store, &redis_url, "transactions").await;
+    info!("Starting consumer for 'transactions' channel...");
+    run_consumer(store, redis_url, "transactions").await?;
 
     Ok(())
 }

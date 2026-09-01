@@ -1,7 +1,7 @@
 use anyhow::Result;
-use indexer_config::CONFIG;
 use filter::Filters;
 use geyser::run_geyser;
+use indexer_config::CONFIG;
 use redis_adapter::Redis;
 use rustls::crypto::{CryptoProvider, ring::default_provider};
 mod filter;
@@ -9,8 +9,11 @@ mod geyser;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    CryptoProvider::install_default(default_provider()).unwrap();
-    println!("Starting geyser adapter...");
+    tracing_subscriber::fmt::init();
+
+    CryptoProvider::install_default(default_provider()).ok();
+    tracing::info!("Starting geyser adapter...");
+
     let rpc_url = &CONFIG.rpc_url;
     let redis_url = &CONFIG.redis_url;
     let x_token = &CONFIG.x_token;

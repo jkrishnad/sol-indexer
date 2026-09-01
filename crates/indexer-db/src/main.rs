@@ -9,7 +9,15 @@ use tracing::info;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt::init();
+    // RUST_LOG wins when set; otherwise default to info. Without this,
+    // EnvFilter::from_default_env() defaults to ERROR only and every info!
+    // in the hot path is silently dropped — which looks exactly like a hang.
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info")),
+        )
+        .init();
     // get the required configurations
     let db_url = &CONFIG.db_url;
     let redis_url = &CONFIG.redis_url;
